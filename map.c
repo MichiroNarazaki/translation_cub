@@ -1,6 +1,6 @@
 #include "main.h"
 
-int worldMap[COLS][ROWS] =
+int worldMap[ROWS][COLS] =
 	{
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -27,7 +27,7 @@ int worldMap[COLS][ROWS] =
 		{1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
-int	map_value(int x, int y)
+int	map_value(int y, int x)
 {
-	return worldMap[x][y];
+	return worldMap[y][x];
 }

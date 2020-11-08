@@ -1,44 +1,54 @@
-#include"main.h"
+#include "main.h"
 
-int deal_key(int key_code, t_val *val)
+int deal_key(int key_code, t_game *game)
 {
-	
+	double old_dirX;
+	double old_planeX;
+
+	// printf("x : %lf , ", game->val.pos.x);
+	// printf("y : %lf\n", game->val.pos.y);
 	if (key_code == KEY_ESC)
 		exit(0);
 	else if (key_code == KEY_W)
 	{
-		if (map_value((int)(val->pos.x + val->dir.x * val->move_speed) ,(int)(val->pos.y)) == false)
-			val->pos.x += val->dir.x * val->move_speed;
-		if (map_value((int)(val->pos.x),(int)(val->pos.y + val->dir.y * val->move_speed)) == false)
-			val->pos.y += val->dir.y * val->move_speed;
+		printf("w\n");
+		if (map_value((int)(game->val.pos.y), (int)(game->val.pos.x + game->val.dir.x * game->val.move_speed)) == 0)
+			game->val.pos.x += game->val.dir.x * game->val.move_speed;
+		if (map_value((int)(game->val.pos.y + game->val.dir.y * game->val.move_speed), (int)(game->val.pos.x)) == 0)
+			game->val.pos.y += game->val.dir.y * game->val.move_speed;
 	}
 	else if (key_code == KEY_S)
 	{
-		if (map_value((int)(val->pos.x - val->dir.x * val->move_speed),(int)(val->pos.y)) == false)
-			val->pos.x -= val->dir.x * val->move_speed;
-		if (map_value((int)(val->pos.x),(int)(val->pos.y - val->dir.y * val->move_speed)) == false)
-			val->pos.y -= val->dir.y * val->move_speed;
+		printf("s\n");
+		if (map_value((int)(game->val.pos.y), (int)(game->val.pos.x - game->val.dir.x * game->val.move_speed)) == 0)
+			game->val.pos.x -= game->val.dir.x * game->val.move_speed;
+		if (map_value((int)(game->val.pos.y - game->val.dir.y * game->val.move_speed), (int)(game->val.pos.x)) == 0)
+			game->val.pos.y -= game->val.dir.y * game->val.move_speed;
 	}
 	else if (key_code == KEY_A)
 	{
+		printf("a\n");
 		//both camera direction and camera plane must be rotated
-		double old_DirX = val->dir.x;
-		val->dir.x = val->dir.x * cos(-val->rot_speed) - val->dir.y * sin(-val->rot_speed);
-		val->dir.y = old_DirX * sin(-val->rot_speed) + val->dir.y * cos(-val->rot_speed);
-		double oldPlaneX = val->plane.x;
-		val->plane.x = val->plane.x * cos(-val->rot_speed) - val->plane.y * sin(-val->rot_speed);
-		val->plane.y = oldPlaneX * sin(-val->rot_speed) + val->plane.y * cos(-val->rot_speed);
+		old_dirX = game->val.dir.x;
+		game->val.dir.x = game->val.dir.x * cos(-game->val.rot_speed) - game->val.dir.y * sin(-game->val.rot_speed);
+		game->val.dir.y = old_dirX * sin(-game->val.rot_speed) + game->val.dir.y * cos(-game->val.rot_speed);
+		old_planeX = game->val.plane.x;
+		game->val.plane.x = game->val.plane.x * cos(-game->val.rot_speed) - game->val.plane.y * sin(-game->val.rot_speed);
+		game->val.plane.y = old_planeX * sin(-game->val.rot_speed) + game->val.plane.y * cos(-game->val.rot_speed);
 	}
 	else if (key_code == KEY_D)
 	{
-
+		printf("d\n");
 		//both camera direction and camera plane must be rotated
-		double old_DirX = val->dir.x;
-		val->dir.x = val->dir.x * cos(val->rot_speed) - val->dir.y * sin(val->rot_speed);
-		val->dir.y = old_DirX * sin(val->rot_speed) + val->dir.y * cos(val->rot_speed);
-		double oldPlaneX = val->plane.x;
-		val->plane.x = val->plane.x * cos(val->rot_speed) - val->plane.y * sin(val->rot_speed);
-		val->plane.y = oldPlaneX * sin(val->rot_speed) + val->plane.y * cos(val->rot_speed);
+		old_dirX = game->val.dir.x;
+		game->val.dir.x = game->val.dir.x * cos(game->val.rot_speed) - game->val.dir.y * sin(game->val.rot_speed);
+		game->val.dir.y = old_dirX * sin(game->val.rot_speed) + game->val.dir.y * cos(game->val.rot_speed);
+		old_planeX = game->val.plane.x;
+		game->val.plane.x = game->val.plane.x * cos(game->val.rot_speed) - game->val.plane.y * sin(game->val.rot_speed);
+		game->val.plane.y = old_planeX * sin(game->val.rot_speed) + game->val.plane.y * cos(game->val.rot_speed);
 	}
+	g_key_1();
+	// printf("x : %lf , ", game->val.pos.x);
+	// printf("y : %lf\n", game->val.pos.y);
 	return (0);
 }

@@ -17,10 +17,6 @@
 #define KEY_S 125 //下
 #define KEY_D 124 //右
 
-// #define TILE_SIZE 32
-#define TILE_SIZE 32
-
-
 #define X_EVENT_KEY_PRESS 2
 #define X_EVENT_KEY_EXIT 17 //Exit program key code
 
@@ -41,27 +37,11 @@
 #define	TEAL		0x00008080
 #define	PURPLE		0x00800080
 #define	OLIVE		0x00808000
+#define TILE_SIZE 32
 #define COLS 24
 #define ROWS 24
 #define WIDTH COLS *TILE_SIZE
 #define HEIGHT ROWS *TILE_SIZE
-
-typedef struct s_img
-{
-	void *img;
-	int *data; //imgの本体
-
-	int size_l;
-	int bpp;
-	int endian;
-} t_img;
-
-typedef struct s_game
-{
-	void *mlx;
-	void *win;
-	t_img img;
-} t_game;
 
 
 typedef struct s_int_xy
@@ -96,13 +76,35 @@ typedef struct s_val
 	double rot_speed;
 } t_val;
 
+typedef struct s_img
+{
+	void *img;
+	int *data; //imgの本体
+
+	int size_l;
+	int bpp;
+	int endian;
+} t_img;
+
+typedef struct s_game
+{
+	void *mlx;
+	void *win;
+	t_img img;
+	t_val val;
+} t_game;
+
 void cal_and_init(t_val *val);
 int ret_color(t_val *val);
 void dda(t_val *val,int *side,int *hit);
-int deal_key(int key_code, t_val *val);
-void main_hook(t_img *img);
-int	map_value(int x, int y);
+int deal_key(int key_code, t_game *game);
+void main_hook(t_game *game);
+int	map_value(int y, int x);
 void ver_line(t_img *img, int x, t_start_end *y, int color);
+void g_key_0(void);
+void g_key_1(void);
+int is_g_key(void);
+void	main_hook_init(t_game *game);
 
 
 

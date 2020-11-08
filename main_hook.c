@@ -7,55 +7,58 @@
 - main関数にコードが全て書かれているので、関数分割、変数を構造体にする。
 */
 
-void main_hook(t_img *img)
+void main_hook_init(t_game *game)
 {
-	t_val val;
-	int w = 50;
-	int h = 50;
-	double time = 0;	//time of current frame
-	double oldTime = 0; //time of previous frame
+
+	game->val.dir.x = -1; //initial direction vector
+	game->val.dir.y = 0;
+	game->val.pos.x = 12; //x and y start position
+	game->val.pos.y = 10;
+	game->val.plane.x = 0.1; //the 2d raycaster version of camera plane
+	game->val.plane.y = 0.66;
+}
+
+void main_hook(t_game *game)
+{
+	int w = WIDTH;
+	int h = HEIGHT;
 	int x;
 	double perpWallDist;
-	int hit = 0; //was there a wall hit?
-	int side;	 //was a NS or a EW wall hit?
+	int hit;  //was there a wall hit?
+	int side; //was a NS or a EW wall hit?
 	double cameraX;
+	double frameTime;
 	int lineHeight;
 	int color;
 	t_start_end y;
-
-	val.dir.x = -1; //initial direction vector
-	val.dir.y = 0;
-	val.pos.x = 22; //x and y start position
-	val.pos.y = 12;
-	val.plane.x = 0; //the 2d raycaster version of camera plane
-	val.plane.y = 0.66;
 
 	// while (!done())
 	// {
 	for (x = 0; x < w; x++)
 	{
 		//線の位置と方向の計算
-		cameraX = 2 * x / (double)w - 1; //x-coordinate in camera space
-		val.ray_dir.x = val.dir.x + val.plane.x * cameraX;
-		val.ray_dir.y = val.dir.y + val.plane.y * cameraX;
+		cameraX = -(2 * x / (double)w - 1); //x-coordinate in camera space
+		game->val.ray_dir.x = game->val.dir.x + game->val.plane.x * cameraX;
+		game->val.ray_dir.y = game->val.dir.y + game->val.plane.y * cameraX;
 		//which box of the map we're in
-		val.map.x = (int)(val.pos.x);
-		val.map.y = (int)(val.pos.y);
+		game->val.map.x = (int)(game->val.pos.x);
+		game->val.map.y = (int)(game->val.pos.y);
 
 		//ＸＹ側から次のＸＹ側までの長さ
-		val.delta_dist.x = (val.ray_dir.y == 0) ? 0 : ((val.ray_dir.x == 0) ? 1 : fabs(1 / val.ray_dir.x));
-		val.delta_dist.y = (val.ray_dir.x == 0) ? 0 : ((val.ray_dir.y == 0) ? 1 : fabs(1 / val.ray_dir.y));
-
+		game->val.delta_dist.x = (game->val.ray_dir.y == 0) ? 0 : ((game->val.ray_dir.x == 0) ? 1 : fabs(1 / game->val.ray_dir.x));
+		game->val.delta_dist.y = (game->val.ray_dir.x == 0) ? 0 : ((game->val.ray_dir.y == 0) ? 1 : fabs(1 / game->val.ray_dir.y));
+		hit = 0;
 		//calculate step and initial sideDist
-		cal_and_init(&val);
+		cal_and_init(&game->val);
 		//perform DDA
-		dda(&val, &side, &hit);
+		dda(&game->val, &side, &hit);
 		//Calculate distance projected on camera direction (Euclidean distance will give fisheye effect!)
 		if (side == 0)
-			perpWallDist = (val.map.x - val.pos.x + (1 - val.step.x) / 2) / val.ray_dir.x;
+			perpWallDist = (game->val.map.x - game->val.pos.x + (1 - game->val.step.x) / 2) / game->val.ray_dir.x;
 		else
-			perpWallDist = (val.map.y - val.pos.y + (1 - val.step.y) / 2) / val.ray_dir.y;
+			perpWallDist = (game->val.map.y - game->val.pos.y + (1 - game->val.step.y) / 2) / game->val.ray_dir.y;
 
+		/***************************************************************/
 		//Calculate height of line to draw on screen
 		lineHeight = (int)(h / perpWallDist);
 
@@ -67,7 +70,7 @@ void main_hook(t_img *img)
 		if (y.end >= h)
 			y.end = h - 1;
 		//choose wall color
-		color = ret_color(&val);
+		color = ret_color(&game->val);
 		//give x and y sides different brightness
 		if (side == 1)
 		{
@@ -76,7 +79,24 @@ void main_hook(t_img *img)
 		// }
 
 		//move forward if no wall in front of you
-		ver_line(img,x,&y,color);
+		ver_line(&(game->img), x, &y, color);
 	}
-	// deal_key(key_code, &val);
+	printf("-----------------------------------\n");
+	printf("| (x ,y) : ( %lf , %lf ) |\n",game->val.pos.x,game->val.pos.y);
+	printf("-----------------------------------\n");
+	// //timing for input and FPS counter
+	// oldTime = time;
+	// time = getTicks();
+	// double frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
+	// print(1.0 / frameTime); //FPS counter
+	// redraw();
+	// cls();
+
+	frameTime = 0.1;
+	//speed modifiers
+	game->val.move_speed = frameTime * 5.0; //the constant value is in squares/second
+	game->val.rot_speed = frameTime * 3.0;	//the constant value is in radians/second
+											// readKeys();
+											// printf("%d\n", x);
+											// deal_key(key_code, &game->val);
 }

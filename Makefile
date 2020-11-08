@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 NAME = translate.a
-OPTIONS = -L../opengl -lmlx -framework OpenGL -framework AppKit
+OPTIONS = -L../cub_git/opengl -lmlx -framework OpenGL -framework AppKit
 SOURCES =	cal_and_init.c\
 			color.c \
 			dda.c \
